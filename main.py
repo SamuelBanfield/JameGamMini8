@@ -83,9 +83,9 @@ def main():
         #This loop happens FPS times a second and calls all the core functions, getting input from the user, doing the game logic and drawing the screen
         counter += 1
         gameLoop(currentScene, player)
-        player.load()
+        player.loadImg()
         drawScreen(SCREEN, currentScene, player, bottleInterface)
-        if counter % (FPS/2) == 0:
+        if counter % FPS == 0:
             animate(Entities)
         CLOCK.tick(FPS)
 
