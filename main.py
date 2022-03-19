@@ -1,24 +1,38 @@
 import pygame, sys
 import scenes, players
+import interfaces
 from pygame.locals import *
 pygame.init()
 #importing pygame, pygame.init() just loads some python stuff, you can ignore it
+
+"""This looks very cool joe, one thing is it loads the images every time, which will get slow, so it might be better to load all the images into an image dict, then use 'caption' to select current image from the image dict raher than choosing which one to load"""
+
+
 
 def animate(Entities):
     for i in range(len(Entities)):
         Entities[i].frame = Entities[i].frame % Entities[i].frames + 1
     
-def drawScreen(SCREEN, currentScene, player):
+def drawScreen(SCREEN, currentScene, player, bottleInterface):
     '''This function draws everything to the SCREEN, which is  the game window'''
     SCREEN.fill((0,0,0)) #fills the screen in black, otherwise whatever we drew last time will still be there
-    
+    WIDTH, HEIGHT = SCREEN.get_size()
+
     #filling the scenes image with red, then drawing on the player
     currentScene.image.fill((200,200,200))
+    currentScene.rect.center = (WIDTH//2, HEIGHT//2)
+    currentScene.image.blit(pygame.transform.scale(player.Img, (150,150)),(player.x,player.y))
     # pygame.draw.rect(currentScene.image, (0,255,0), (player.x, player.y, 20, 20))
     
-    #drawing the scenes image onto the screen
+    #drawing bottle interface, this is where ingredient mixing and stuff will happen?
+    bottleInterface.image.fill((200,200,200))
+
+    bottleInterface.rect.center = WIDTH-bottleInterface.image.get_size()[0]//2, HEIGHT//2
+
+    #drawing the interfaces onto the screen
     SCREEN.blit(currentScene.image, currentScene.rect)
-    SCREEN.blit(pygame.transform.scale(player.Img, (150,150)),(player.x,player.y))
+    SCREEN.blit(bottleInterface.image, bottleInterface.rect)
+
     
     pygame.display.flip()#This function is called whenever we are finished drawing stuff to the screen, to make it display
 
@@ -33,16 +47,16 @@ def gameLoop(currentScene, player):
 
     #moving the player if the wasd keys are pressed:
     keys = pygame.key.get_pressed() #this returns a dictionary, and can be used to check whether different keys are pressed
-    if keys[K_w]:
+    if keys[K_w] or keys[K_UP]:
         player.y -= player.speed
         player.caption = 'FaceUp'
-    if keys[K_s]:
+    if keys[K_s] or keys[K_DOWN]:
         player.y += player.speed
         player.caption = 'FaceDown'
-    if keys[K_a]:
+    if keys[K_a] or keys[K_LEFT]:
         player.x -= player.speed
         player.caption = 'FaceLeft'
-    if keys[K_d]:
+    if keys[K_d] or keys[K_RIGHT]:
         player.x += player.speed
         player.caption = 'FaceRight'
 
@@ -59,6 +73,8 @@ def main():
     currentScene = scenes.Scene('start', 500, 500)
     player = players.Player(100, 100, 'Wizard', 'FaceDown', currentScene)
     
+    bottleInterface = interfaces.BottleInterface()
+
     Entities = [player]
     counter = 0
     while True:
@@ -66,7 +82,7 @@ def main():
         counter += 1
         gameLoop(currentScene, player)
         player.load()
-        drawScreen(SCREEN, currentScene, player)
+        drawScreen(SCREEN, currentScene, player, bottleInterface)
         if counter % (FPS/2) == 0:
             animate(Entities)
         CLOCK.tick(FPS)
