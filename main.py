@@ -1,12 +1,12 @@
 import pygame, sys
-import scenes, players
+import scenes, players, ingredients
 import interfaces
 from pygame.locals import *
 pygame.init()
 #importing pygame, pygame.init() just loads some python stuff, you can ignore it
 
 """This looks very cool joe, one thing is it loads the images every time, which will get slow, so it might be better to load all the images into an image dict, then use 'caption' to select current image from the image dict raher than choosing which one to load"""
-
+#ive addded map objects, im not sure if you were aniticipating them being the same as 'entities', but i assumed it would be for enemies and stuff
 
 
 def animate(Entities):
@@ -19,10 +19,9 @@ def drawScreen(SCREEN, currentScene, player, bottleInterface):
     WIDTH, HEIGHT = SCREEN.get_size()
 
     #filling the scenes image with red, then drawing on the player
-    currentScene.image.fill((200,200,200))
+    currentScene.updateImage()
     currentScene.rect.center = (WIDTH//2, HEIGHT//2)
     currentScene.image.blit(pygame.transform.scale(player.Img, (150,150)),(player.x,player.y))
-    # pygame.draw.rect(currentScene.image, (0,255,0), (player.x, player.y, 20, 20))
     
     #drawing bottle interface, this is where ingredient mixing and stuff will happen?
     bottleInterface.image.fill((200,200,200))
@@ -71,12 +70,15 @@ def main():
 
     #Setting up initial scene and player:
     currentScene = scenes.Scene('start', 500, 500)
+    currentScene.mapObjects.append(ingredients.Ingredient('generic', 20, 20))
     player = players.Player(100, 100, 'Wizard', 'FaceDown', currentScene)
     
     bottleInterface = interfaces.BottleInterface()
 
     Entities = [player]
+
     counter = 0
+
     while True:
         #This loop happens FPS times a second and calls all the core functions, getting input from the user, doing the game logic and drawing the screen
         counter += 1
