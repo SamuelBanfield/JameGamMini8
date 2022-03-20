@@ -4,6 +4,8 @@ from pygame.locals import *
 pygame.init()
 #importing pygame, pygame.init() just loads some python stuff, you can ignore it
 
+font20 = pygame.font.Font(pygame.font.get_default_font(), 20)
+
 def animate(currentScene):
     for entity in currentScene.entities:
         entity.frame = entity.frame % entity.frames + 1
@@ -22,6 +24,13 @@ def drawScreen(SCREEN, currentScene, bottleInterface):
     for entity in currentScene.entities:
         entity.updateImage()
         currentScene.image.blit(pygame.transform.scale(entity.image, entity.size),(entity.x,entity.y))
+
+    if currentScene.player.contacts != []:
+        fontImage = font20.render('Press f to enter door', True, (255,255,255))
+        fontRect = fontImage.get_rect()
+        w, h = currentScene.image.get_size()
+        fontRect.center = (w//2, 5*h//6)
+        currentScene.image.blit(fontImage, fontRect)
     
     #drawing bottle interface, this is where ingredient mixing and stuff will happen
     bottleInterface.image.fill((200,200,200))
@@ -42,6 +51,14 @@ def gameLoop(currentScene, player):
             #This handles the user quitting the game by pressing x
             pygame.quit()
             sys.exit()
+        if event.type == KEYUP:
+            if event.key == K_f:
+                print('a')
+                if player.contacts != []:
+                    player.contacts = []
+                    currentScene = scenes.setup1(player)
+                    #currentScene = scenes.Scene('start', 500, 500)
+
 
     #moving the player if the wasd keys are pressed:
     keys = pygame.key.get_pressed() #this returns a dictionary, and can be used to check whether different keys are pressed
@@ -58,6 +75,8 @@ def gameLoop(currentScene, player):
         player.move(player.speed, 0)
         player.caption = 'FaceRight'
 
+    return currentScene
+
 def main():
     '''The main function for the game, calls all the others'''
     WIDTH, HEIGHT = 800, 600
@@ -69,8 +88,7 @@ def main():
 
     #Setting up initial scene and player:
     currentScene = scenes.Scene('start', 500, 500)
-    player = players.Entity(100, 100, 'Wizard', 'FaceDown', currentScene, pygame.Rect(0,0,16,10),[8,15])
-    print(player.image.get_size())
+    player = players.Player(100, 100, 'Wizard', 'FaceDown', currentScene, pygame.Rect(0,0,16,10),[8,15])
     player.collisionRect = pygame.Rect((player.x, player.y, player.width//2, player.height//2))
 
     # Adds objects to the current scene
@@ -95,7 +113,7 @@ def main():
     while True:
         #This loop happens FPS times a second and calls all the core functions, getting input from the user, doing the game logic and drawing the screen
         counter += 1
-        gameLoop(currentScene, player)
+        currentScene = gameLoop(currentScene, player)
         drawScreen(SCREEN, currentScene, bottleInterface)
         if counter % FPS == 0:
             animate(currentScene)
