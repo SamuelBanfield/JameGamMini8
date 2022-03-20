@@ -6,11 +6,11 @@ pygame.init()
 #importing pygame, pygame.init() just loads some python stuff, you can ignore it
 
 
-def animate(Entities):
-    for i in range(len(Entities)):
-        Entities[i].frame = Entities[i].frame % Entities[i].frames + 1
+def animate(entities):
+    for i in range(len(entities)):
+        entities[i].frame = entities[i].frame % entities[i].frames + 1
     
-def drawScreen(SCREEN, currentScene, Entities, Scenery, bottleInterface):
+def drawScreen(SCREEN, currentScene, entities, bottleInterface):
     '''This function draws everything to the SCREEN, which is  the game window'''
     SCREEN.fill((0,0,0)) #fills the screen in black, otherwise whatever we drew last time will still be there
     WIDTH, HEIGHT = SCREEN.get_size()
@@ -18,16 +18,12 @@ def drawScreen(SCREEN, currentScene, Entities, Scenery, bottleInterface):
     #updating entity and scenery images then drawing them on
     currentScene.updateImage()
     currentScene.rect.center = (WIDTH//2, HEIGHT//2)
-    for i in range(len(Entities)):
-        Entities[i].updateImage()
-        currentScene.image.blit(pygame.transform.scale(Entities[i].Img, (150,150)),(Entities[i].x,Entities[i].y))
-    for i in range(len(Scenery)):
-        Scenery[i].updateImage()
-        currentScene.image.blit(Scenery[i].Img, (Scenery[i].x,Scenery[i].y))
+    for entity in entities:
+        entity.updateImage()
+        currentScene.image.blit(pygame.transform.scale(entity.image, entity.size),(entity.x,entity.y))
     
     #drawing bottle interface, this is where ingredient mixing and stuff will happen
     bottleInterface.image.fill((200,200,200))
-
     bottleInterface.rect.center = WIDTH-bottleInterface.image.get_size()[0]//2, HEIGHT//2
 
     #drawing the interfaces onto the screen
@@ -49,48 +45,47 @@ def gameLoop(currentScene, player):
     #moving the player if the wasd keys are pressed:
     keys = pygame.key.get_pressed() #this returns a dictionary, and can be used to check whether different keys are pressed
     if keys[K_w] or keys[K_UP]:
-        player.y -= player.speed
+        player.move(0, -player.speed)
         player.caption = 'FaceUp'
     if keys[K_s] or keys[K_DOWN]:
-        player.y += player.speed
+        player.move(0, player.speed)
         player.caption = 'FaceDown'
     if keys[K_a] or keys[K_LEFT]:
-        player.x -= player.speed
+        player.move(-player.speed, 0)        
         player.caption = 'FaceLeft'
     if keys[K_d] or keys[K_RIGHT]:
-        player.x += player.speed
+        player.move(player.speed, 0)
         player.caption = 'FaceRight'
 
 def main():
     '''The main function for the game, calls all the others'''
     WIDTH, HEIGHT = 800, 600
-    SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))#creating the game window
-    pygame.display.set_caption('JameGam8')#naming the window
-    Entities = []
-    Scenery = []
+    SCREEN = pygame.display.set_mode((WIDTH, HEIGHT)) #creating the game window
+    pygame.display.set_caption('JameGam8') #naming the window
+    entities = [] #this should probably belong to the currentScene?
 
     FPS = 60
     CLOCK = pygame.time.Clock()
 
     #Setting up initial scene and player:
     currentScene = scenes.Scene('start', 500, 500)
-    currentScene.mapObjects.append(ingredients.Ingredient('generic', 20, 20))
     player = players.Entity(100, 100, 'Wizard', 'FaceDown', currentScene)
-    door = scenery.Scenery(400, 400, 'Door', currentScene)
+
+    currentScene.player = player
+    currentScene.scenery.append(scenery.Scenery(100, 70, 'Door', currentScene, True))
     
     bottleInterface = interfaces.BottleInterface()
 
-    Entities.append(player)
-    Scenery.append(door)
+    entities.append(player)
     counter = 0
 
     while True:
         #This loop happens FPS times a second and calls all the core functions, getting input from the user, doing the game logic and drawing the screen
         counter += 1
         gameLoop(currentScene, player)
-        drawScreen(SCREEN, currentScene, Entities, Scenery, bottleInterface)
+        drawScreen(SCREEN, currentScene, entities, bottleInterface)
         if counter % FPS == 0:
-            animate(Entities)
+            animate(entities)
         CLOCK.tick(FPS)
 
         

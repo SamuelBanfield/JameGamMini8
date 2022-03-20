@@ -18,6 +18,34 @@ class Entity:
         self.caption = Caption
         self.frame = 1
         self.frames = Frames
-    
+
+    def move(self, xmovement, ymovement):
+        #Entities must be attached to scenes, or this throws an error
+        oldx, oldy = self.x, self.y
+        newx = oldx+xmovement
+        newy = oldy+ymovement
+        #first handling collisions in x direction:
+        for obj in self.scene.collidableObjects:
+            if inside(newx, oldy, self.width, self.height, obj.rect):
+                if oldx<=obj.rect.left:
+                    newx = obj.rect.left-self.width
+                else:
+                    newx = obj.rect.right
+
+        #then handling collisions in y direction:
+        for obj in self.scene.collidableObjects:
+            if inside(newx, newy, self.width, self.height, obj.rect):
+                if oldy<=obj.rect.top:
+                    newy = obj.rect.top-self.height
+                else:
+                    newy = obj.rect.bottom
+        self.x, self.y = newx, newy
+            
     def updateImage(self):
-        self.Img = FrameDict[self.type+self.caption+str(self.frame)]
+        self.image = FrameDict[self.type+self.caption+str(self.frame)]
+        self.rect = self.image.get_rect()
+        self.width, self.height = self.rect.width, self.rect.height
+        self.size = (self.width, self.height)
+
+def inside(x, y, width, height, rect):
+    return rect.top-height<y<rect.bottom and rect.left-width<x<rect.right
