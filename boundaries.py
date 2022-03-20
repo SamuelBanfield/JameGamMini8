@@ -2,6 +2,7 @@ import pygame
 
 class Boundary:
     def __init__(self, x, y, width, height, scene):
+        self.type = 'Boundary'
         self.x, self.y = x, y
         self.scene = scene
         self.width, self.height = self.size = width, height

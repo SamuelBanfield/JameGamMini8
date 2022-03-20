@@ -26,11 +26,14 @@ def drawScreen(SCREEN, currentScene, bottleInterface):
         currentScene.image.blit(pygame.transform.scale(entity.image, entity.size),(entity.x,entity.y))
 
     if currentScene.player.contacts != []:
-        fontImage = font20.render('Press f to enter door', True, (255,255,255))
-        fontRect = fontImage.get_rect()
-        w, h = currentScene.image.get_size()
-        fontRect.center = (w//2, 5*h//6)
-        currentScene.image.blit(fontImage, fontRect)
+        for o in currentScene.player.contacts:
+            if o.type == 'Door':
+                fontImage = font20.render('Press f to enter door', True, (255,255,255))
+                fontRect = fontImage.get_rect()
+                w, h = currentScene.image.get_size()
+                fontRect.center = (w//2, 5*h//6)
+                currentScene.image.blit(fontImage, fontRect)
+                break
     
     #drawing bottle interface, this is where ingredient mixing and stuff will happen
     bottleInterface.image.fill((200,200,200))
@@ -53,11 +56,11 @@ def gameLoop(currentScene, player):
             sys.exit()
         if event.type == KEYUP:
             if event.key == K_f:
-                print('a')
                 if player.contacts != []:
-                    player.contacts = []
-                    currentScene = scenes.setup1(player)
-                    #currentScene = scenes.Scene('start', 500, 500)
+                    for o in player.contacts:
+                        if o.type == 'Door':
+                            currentScene = scenes.setup1(player)
+                            break
 
 
     #moving the player if the wasd keys are pressed:
