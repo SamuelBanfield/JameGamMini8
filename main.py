@@ -4,11 +4,14 @@ from pygame.locals import *
 pygame.init()
 #importing pygame, pygame.init() just loads some python stuff, you can ignore it
 
-def animate(entities):
-    for i in range(len(entities)):
-        entities[i].frame = entities[i].frame % entities[i].frames + 1
+def animate(currentScene):
+    for entity in currentScene.entities:
+        entity.frame = entity.frame % entity.frames + 1
+    for sceneryElement in currentScene.scenery:
+        if sceneryElement.animated:
+            sceneryElement.frame = sceneryElement.frame % sceneryElement.frames + 1
     
-def drawScreen(SCREEN, currentScene, entities, bottleInterface):
+def drawScreen(SCREEN, currentScene, bottleInterface):
     '''This function draws everything to the SCREEN, which is  the game window'''
     SCREEN.fill((0,0,0)) #fills the screen in black, otherwise whatever we drew last time will still be there
     WIDTH, HEIGHT = SCREEN.get_size()
@@ -16,7 +19,7 @@ def drawScreen(SCREEN, currentScene, entities, bottleInterface):
     #updating entity and scenery images then drawing them on
     currentScene.updateImage()
     currentScene.rect.center = (WIDTH//2, HEIGHT//2)
-    for entity in entities:
+    for entity in currentScene.entities:
         entity.updateImage()
         currentScene.image.blit(pygame.transform.scale(entity.image, entity.size),(entity.x,entity.y))
     
@@ -60,7 +63,6 @@ def main():
     WIDTH, HEIGHT = 800, 600
     SCREEN = pygame.display.set_mode((WIDTH, HEIGHT)) #creating the game window
     pygame.display.set_caption('JameGam8') #naming the window
-    entities = [] #this should probably belong to the currentScene?
 
     FPS = 60
     CLOCK = pygame.time.Clock()
@@ -71,21 +73,26 @@ def main():
     print(player.image.get_size())
     player.collisionRect = pygame.Rect((player.x, player.y, player.width//2, player.height//2))
 
+    # Adds objects to the current scene
     currentScene.player = player
-    currentScene.scenery.append(scenery.Scenery(100, 70, 'Door', currentScene, True))
+    currentScene.scenery.append(scenery.Scenery(225, 60, 'Door', scene=currentScene, animated=False, collidable=True))
+    currentScene.scenery.append(scenery.Scenery(130, 60, 'Torch', scene=currentScene, animated=True))
+    currentScene.scenery.append(scenery.Scenery(370, 60, 'Torch', scene=currentScene, animated=True))
     
     bottleInterface = interfaces.BottleInterface()
 
-    entities.append(player)
+    #Adds entities to the current scene
+    currentScene.entities.append(player)
+    
     counter = 0
 
     while True:
         #This loop happens FPS times a second and calls all the core functions, getting input from the user, doing the game logic and drawing the screen
         counter += 1
         gameLoop(currentScene, player)
-        drawScreen(SCREEN, currentScene, entities, bottleInterface)
+        drawScreen(SCREEN, currentScene, bottleInterface)
         if counter % FPS == 0:
-            animate(entities)
+            animate(currentScene)
         CLOCK.tick(FPS)
 
         
