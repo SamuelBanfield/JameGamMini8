@@ -9,7 +9,7 @@ for Etype in EntityTypes:
         for frame in range(1,Frames+1):
             FrameDict[Etype+caption+str(frame)] = pygame.image.load('Art/'+Etype+'/'+caption+str(frame)+'.png')
 
-class Player:
+class Entity:
     def __init__(self, x, y, Type, Caption, scene = None):
         self.x, self.y = x, y
         self.speed = 3
@@ -19,5 +19,5 @@ class Player:
         self.frame = 1
         self.frames = Frames
     
-    def loadImg(self):
+    def updateImage(self):
         self.Img = FrameDict[self.type+self.caption+str(self.frame)]

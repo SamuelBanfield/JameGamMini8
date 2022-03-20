@@ -1,29 +1,31 @@
 import pygame, sys
-import scenes, players, ingredients
+import scenes, players, ingredients, scenery
 import interfaces
 from pygame.locals import *
 pygame.init()
 #importing pygame, pygame.init() just loads some python stuff, you can ignore it
-
-"""This looks very cool joe, one thing is it loads the images every time, which will get slow, so it might be better to load all the images into an image dict, then use 'caption' to select current image from the image dict raher than choosing which one to load"""
-#ive addded map objects, im not sure if you were aniticipating them being the same as 'entities', but i assumed it would be for enemies and stuff
 
 
 def animate(Entities):
     for i in range(len(Entities)):
         Entities[i].frame = Entities[i].frame % Entities[i].frames + 1
     
-def drawScreen(SCREEN, currentScene, player, bottleInterface):
+def drawScreen(SCREEN, currentScene, Entities, Scenery, bottleInterface):
     '''This function draws everything to the SCREEN, which is  the game window'''
     SCREEN.fill((0,0,0)) #fills the screen in black, otherwise whatever we drew last time will still be there
     WIDTH, HEIGHT = SCREEN.get_size()
 
-    #filling the scenes image with red, then drawing on the player
+    #updating entity and scenery images then drawing them on
     currentScene.updateImage()
     currentScene.rect.center = (WIDTH//2, HEIGHT//2)
-    currentScene.image.blit(pygame.transform.scale(player.Img, (150,150)),(player.x,player.y))
+    for i in range(len(Entities)):
+        Entities[i].updateImage()
+        currentScene.image.blit(pygame.transform.scale(Entities[i].Img, (150,150)),(Entities[i].x,Entities[i].y))
+    for i in range(len(Scenery)):
+        Scenery[i].updateImage()
+        currentScene.image.blit(Scenery[i].Img, (Scenery[i].x,Scenery[i].y))
     
-    #drawing bottle interface, this is where ingredient mixing and stuff will happen?
+    #drawing bottle interface, this is where ingredient mixing and stuff will happen
     bottleInterface.image.fill((200,200,200))
 
     bottleInterface.rect.center = WIDTH-bottleInterface.image.get_size()[0]//2, HEIGHT//2
@@ -64,6 +66,8 @@ def main():
     WIDTH, HEIGHT = 800, 600
     SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))#creating the game window
     pygame.display.set_caption('JameGam8')#naming the window
+    Entities = []
+    Scenery = []
 
     FPS = 60
     CLOCK = pygame.time.Clock()
@@ -71,20 +75,20 @@ def main():
     #Setting up initial scene and player:
     currentScene = scenes.Scene('start', 500, 500)
     currentScene.mapObjects.append(ingredients.Ingredient('generic', 20, 20))
-    player = players.Player(100, 100, 'Wizard', 'FaceDown', currentScene)
+    player = players.Entity(100, 100, 'Wizard', 'FaceDown', currentScene)
+    door = scenery.Scenery(400, 400, 'Door', currentScene)
     
     bottleInterface = interfaces.BottleInterface()
 
-    Entities = [player]
-
+    Entities.append(player)
+    Scenery.append(door)
     counter = 0
 
     while True:
         #This loop happens FPS times a second and calls all the core functions, getting input from the user, doing the game logic and drawing the screen
         counter += 1
         gameLoop(currentScene, player)
-        player.loadImg()
-        drawScreen(SCREEN, currentScene, player, bottleInterface)
+        drawScreen(SCREEN, currentScene, Entities, Scenery, bottleInterface)
         if counter % FPS == 0:
             animate(Entities)
         CLOCK.tick(FPS)
