@@ -100,7 +100,8 @@ def main():
     currentScene.scenery.append(scenery.Scenery(130, 60, 'Torch', scene=currentScene, animated=True))
     currentScene.scenery.append(scenery.Scenery(370, 60, 'Torch', scene=currentScene, animated=True))
     
-    currentScene.entities.append(players.Entity(100, 200, 'Skeleton', 'FaceDown', scene = currentScene, collisionRect = None, offset = [0,0]))
+    # currentScene.entities.append(players.Entity(100, 200, 'Skeleton', 'FaceDown', scene = currentScene, collisionRect = None, offset = [0,0]))
+    currentScene.entities.append(players.Entity(200, 200, 'Rat', 'FaceDown', scene = currentScene, collisionRect = None, offset = [0,0]))
 
     # Adds the map boundaries
     currentScene.collidableObjects.append(boundaries.Boundary(0, 80, 500, 30, currentScene))

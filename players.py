@@ -1,7 +1,7 @@
 import pygame
 
 entityCaptions = ['FaceDown','FaceUp','FaceLeft','FaceRight']
-entityTypes = ['Wizard', 'Skeleton']
+entityTypes = ['Wizard', 'Skeleton', 'Rat']
 Frames = 2
 FrameDict = {}
 for Etype in entityTypes:
