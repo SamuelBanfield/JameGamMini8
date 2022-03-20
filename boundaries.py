@@ -1,7 +1,5 @@
 import pygame
 
-import pygame
-
 class Boundary:
     def __init__(self, x, y, width, height, scene):
         self.x, self.y = x, y
