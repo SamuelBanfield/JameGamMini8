@@ -1,5 +1,5 @@
 import pygame, sys
-import scenes, players, ingredients, scenery, interfaces
+import scenes, players, ingredients, scenery, interfaces, boundaries
 from pygame.locals import *
 pygame.init()
 #importing pygame, pygame.init() just loads some python stuff, you can ignore it
@@ -78,6 +78,12 @@ def main():
     currentScene.scenery.append(scenery.Scenery(225, 60, 'Door', scene=currentScene, animated=False, collidable=True))
     currentScene.scenery.append(scenery.Scenery(130, 60, 'Torch', scene=currentScene, animated=True))
     currentScene.scenery.append(scenery.Scenery(370, 60, 'Torch', scene=currentScene, animated=True))
+    
+    # Adds the map boundaries
+    currentScene.collidableObjects.append(boundaries.Boundary(0, 80, 500, 30, currentScene))
+    currentScene.collidableObjects.append(boundaries.Boundary(0, 460, 500, 30, currentScene))
+    currentScene.collidableObjects.append(boundaries.Boundary(15, 0, 30, 500, currentScene))
+    currentScene.collidableObjects.append(boundaries.Boundary(450, 0, 30, 500, currentScene))
     
     bottleInterface = interfaces.BottleInterface()
 

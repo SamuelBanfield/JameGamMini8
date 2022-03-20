@@ -13,7 +13,8 @@ class Scene:
         self.rect = self.image.get_rect() #pygame rect object gives a location to draw the scene image, used when drawing the image to the screen
         self.width, self.height = width, height
         self.scenery = [] #to store the location of random map objects and stuff
-        self.entities = [] #stores the entities
+        self.entities = []
+        self.boundaries = []
         self.collidableObjects = []
 
     def updateImage(self):
