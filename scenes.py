@@ -25,6 +25,32 @@ class Scene:
             obj.updateImage()
             img.blit(obj.image, obj.rect)
 
+    def update(self):
+        p = self.player
+        for entity in self.entities:
+            if entity != p:
+                #moving in the direction of the player
+                if entity.x > p.x:
+                    entity.move(-1,0)
+                elif entity.x < p.x:
+                    entity.move(1,0)
+                if entity.y > p.y:
+                    entity.move(0,-1)
+                elif entity.y < p.y:
+                    entity.move(0,1)
+
+                #making the player face the right direction
+                if (entity.x-p.x)**2 > (entity.y-p.y)**2:
+                    if entity.x > p.x:
+                        entity.caption = 'FaceLeft'
+                    else:
+                        entity.caption = 'FaceRight'
+                else:
+                    if entity.y > p.y:
+                        entity.caption = 'FaceUp'
+                    else:
+                        entity.caption = 'FaceDown'
+
     def __str__(self):
         return self.name
 

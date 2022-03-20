@@ -77,7 +77,7 @@ def gameLoop(currentScene, player):
     if keys[K_d] or keys[K_RIGHT]:
         player.move(player.speed, 0)
         player.caption = 'FaceRight'
-
+    currentScene.update()
     return currentScene
 
 def main():
@@ -100,6 +100,8 @@ def main():
     currentScene.scenery.append(scenery.Scenery(130, 60, 'Torch', scene=currentScene, animated=True))
     currentScene.scenery.append(scenery.Scenery(370, 60, 'Torch', scene=currentScene, animated=True))
     
+    currentScene.entities.append(players.Entity(100, 200, 'Skeleton', 'FaceDown', scene = currentScene, collisionRect = None, offset = [0,0]))
+
     # Adds the map boundaries
     currentScene.collidableObjects.append(boundaries.Boundary(0, 80, 500, 30, currentScene))
     currentScene.collidableObjects.append(boundaries.Boundary(0, 460, 500, 30, currentScene))
