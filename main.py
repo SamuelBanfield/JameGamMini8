@@ -1,10 +1,8 @@
 import pygame, sys
-import scenes, players, ingredients, scenery
-import interfaces
+import scenes, players, ingredients, scenery, interfaces
 from pygame.locals import *
 pygame.init()
 #importing pygame, pygame.init() just loads some python stuff, you can ignore it
-
 
 def animate(entities):
     for i in range(len(entities)):
@@ -69,7 +67,9 @@ def main():
 
     #Setting up initial scene and player:
     currentScene = scenes.Scene('start', 500, 500)
-    player = players.Entity(100, 100, 'Wizard', 'FaceDown', currentScene)
+    player = players.Entity(100, 100, 'Wizard', 'FaceDown', currentScene, pygame.Rect(0,0,16,10),[8,15])
+    print(player.image.get_size())
+    player.collisionRect = pygame.Rect((player.x, player.y, player.width//2, player.height//2))
 
     currentScene.player = player
     currentScene.scenery.append(scenery.Scenery(100, 70, 'Door', currentScene, True))
